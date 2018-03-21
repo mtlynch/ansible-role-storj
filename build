@@ -39,6 +39,10 @@ mkdir -p roles
 rm roles/role_under_test || true
 ln -s ../../ roles/role_under_test
 
+# Install dependencies.
+ansible-galaxy install \
+  -r roles/role_under_test/tests/requirements.yml
+
 # Ansible syntax check.
 ansible-playbook test.yml --syntax-check
 
