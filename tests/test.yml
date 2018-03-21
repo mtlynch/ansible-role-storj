@@ -1,0 +1,10 @@
+---
+- hosts: all
+  remote_user: root
+  pre_tasks:
+    - name: update apt-get repository
+      apt:
+        update_cache: yes
+      changed_when: false
+  roles:
+    - { role: role_under_test, tags: ['role_under_test'] }

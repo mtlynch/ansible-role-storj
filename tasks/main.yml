@@ -1,0 +1,15 @@
+---
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - git
+    - python
+    - build-essential
+
+- name: install storjshare
+  npm:
+    name: storjshare-daemon
+    state: present
+    global: yes
