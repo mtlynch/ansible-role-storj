@@ -10,7 +10,7 @@ galaxy_info:
       - xenial
   - name: Debian
     versions:
-      - 8
+      - jessie
   galaxy_tags:
     - storj
 dependencies:
