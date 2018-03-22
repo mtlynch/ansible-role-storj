@@ -3,6 +3,7 @@ storj_daemon_version: 5.3.1
 storj_dir: /opt/storj
 storj_config_path: "{{ storj_dir }}/config"
 storj_farmer_share_dir: "{{ storj_dir }}/shared"
+storj_logs_dir: "{{ storj_dir }}/logs"
 storj_farmer_share_size: null
 storj_payment_address: null
 storj_daemon_rpc_port: 45015

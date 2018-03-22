@@ -15,17 +15,15 @@
     state: present
     global: yes
 
-- name: create storj root directory
+- name: create storj directories
   file:
-    path: "{{ storj_dir }}"
+    path: "{{ item }}"
     state: directory
     mode: 0755
-
-- name: create storj farmer directory
-  file:
-    path: "{{ storj_farmer_share_dir }}"
-    state: directory
-    mode: 0755
+  with_items:
+    - "{{ storj_dir }}"
+    - "{{ storj_farmer_share_dir }}"
+    - "{{ storj_logs_dir }}"
 
 - name: ensure storjshare daemon is running
   command: storjshare daemon
@@ -46,6 +44,7 @@
       --size "{{ storj_farmer_share_size }}" \
       --rpcaddress "{{ storj_daemon_rpc_address }}" \
       --rpcport "{{ storj_daemon_rpc_port }}" \
+      --logdir "{{ storj_logs_dir }}" \
       --verbosity "{{ storj_daemon_log_verbosity }}" \
       --outfile "{{ storj_config_path }}" \
       --noedit
