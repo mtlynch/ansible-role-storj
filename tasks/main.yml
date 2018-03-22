@@ -13,3 +13,8 @@
     name: storjshare-daemon
     state: present
     global: yes
+
+- name: ensure storjshare daemon is running
+  command: storjshare daemon
+  register: daemon_result
+  changed_when: "'* starting daemon' in daemon_result.stdout"
