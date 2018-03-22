@@ -9,3 +9,6 @@ storj_payment_address: null
 storj_daemon_rpc_port: 45015
 storj_daemon_rpc_address: 127.0.0.1
 storj_daemon_log_verbosity: 3
+
+storj_user: storj
+storj_group: "{{ storj_user }}"
