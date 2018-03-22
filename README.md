@@ -1,10 +1,10 @@
-# Ansible Role: Sia
+# Ansible Role: Storj
 
 [![Build Status](https://travis-ci.org/mtlynch/ansible-role-storj.svg?branch=master)](https://travis-ci.org/mtlynch/ansible-role-storj)
 [![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-storj-blue.svg?style=flat-square)](https://galaxy.ansible.com/mtlynch/storj)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](LICENSE)
 
-The Sia Ansible role installs [Sia](https://storj.tech/) on a node and automates its initial provisioning steps.
+The Storj Ansible role installs [Storj](https://storj.io/) on a node and automates its initial provisioning steps.
 
 ## Features
 
