@@ -6,5 +6,8 @@
       apt:
         update_cache: yes
       changed_when: false
+  vars:
+    storj_payment_address: "0x0000000000000000000000000000000000000000"
+    storj_farmer_share_size: "500KB"
   roles:
     - { role: role_under_test, tags: ['role_under_test'] }

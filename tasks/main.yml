@@ -14,7 +14,47 @@
     state: present
     global: yes
 
+- name: create storj root directory
+  file:
+    path: "{{ storj_dir }}"
+    state: directory
+    mode: 0755
+
+- name: create storj farmer directory
+  file:
+    path: "{{ storj_farmer_share_dir }}"
+    state: directory
+    mode: 0755
+
 - name: ensure storjshare daemon is running
   command: storjshare daemon
   register: daemon_result
   changed_when: "'* starting daemon' in daemon_result.stdout"
+  failed_when: "'failed' in daemon_result.stderr"
+
+- name: check for existing storjshare config
+  stat:
+    path: "{{ storj_config_path }}"
+  register: config_path
+
+- name: create storjshare config
+  command: |
+    storjshare create \
+      --storj "{{ storj_payment_address }}" \
+      --storage "{{ storj_farmer_share_dir }}" \
+      --size "{{ storj_farmer_share_size }}" \
+      --rpcaddress "{{ storj_daemon_rpc_address }}" \
+      --rpcport "{{ storj_daemon_rpc_port }}" \
+      --verbosity "{{ storj_daemon_log_verbosity }}" \
+      --outfile "{{ storj_config_path }}" \
+      --noedit
+  register: create_config_result
+  when: not config_path.stat.exists
+  changed_when: "'skipped' not in create_config_result.stdout"
+  failed_when: "(create_config_result.stderr is defined) and ('failed' in create_config_result.stderr)"
+
+- name: start storjshare
+  command: "storjshare start --config {{ storj_config_path }}"
+  register: storjshare_result
+  changed_when: False
+  failed_when: "'failed' in storjshare_result.stderr"

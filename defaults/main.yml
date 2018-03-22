@@ -1,0 +1,9 @@
+---
+storj_dir: /opt/storj
+storj_config_path: "{{ storj_dir }}/config"
+storj_farmer_share_dir: "{{ storj_dir }}/shared"
+storj_farmer_share_size: null
+storj_payment_address: null
+storj_daemon_rpc_port: 45015
+storj_daemon_rpc_address: 127.0.0.1
+storj_daemon_log_verbosity: 3
