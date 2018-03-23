@@ -11,7 +11,7 @@ storj_farmer_default_rpc_address: 127.0.0.1
 storj_daemon_log_verbosity: 3
 
 storj_farmer_configs:
-  - payment_address: null
-    share_size: null
-    rpc_address: "{{ storj_farmer_default_rpc_address }}"
-    rpc_port: 45015
+- payment_address: null
+  share_size: null
+  rpc_address: "{{ storj_farmer_default_rpc_address }}"
+  rpc_port: 45015
