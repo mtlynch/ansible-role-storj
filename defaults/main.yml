@@ -1,15 +1,17 @@
 ---
+storj_user: storj
+storj_group: "{{ storj_user }}"
+
 storj_daemon_version: 5.3.1
 storj_dir: /opt/storj
 storj_farmer_config_dir: "{{ storj_dir }}/configs"
 storj_farmer_share_dir: "{{ storj_dir }}/shared"
 storj_logs_dir: "{{ storj_dir }}/logs"
+storj_farmer_default_rpc_address: 127.0.0.1
+storj_daemon_log_verbosity: 3
+
 storj_farmer_configs:
   - payment_address: null
     share_size: null
+    rpc_address: "{{ storj_farmer_default_rpc_address }}"
     rpc_port: 45015
-storj_daemon_rpc_address: 127.0.0.1
-storj_daemon_log_verbosity: 3
-
-storj_user: storj
-storj_group: "{{ storj_user }}"
