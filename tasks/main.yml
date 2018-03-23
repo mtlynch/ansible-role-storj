@@ -26,16 +26,6 @@
     state: present
     global: yes
 
-- name: create storj logs directory
-  file:
-    path: "{{ storj_logs_dir }}"
-    state: directory
-    owner: "{{ storj_user }}"
-    group: "{{ storj_group }}"
-    mode: 0755
-  with_items:
-    - "{{ storj_logs_dir }}"
-
 - name: ensure storjshare daemon is running
   command: storjshare daemon
   become: true
@@ -55,6 +45,8 @@
     owner: "{{ storj_user }}"
     group: "{{ storj_group }}"
     mode: 0755
+  # Workaround for https://github.com/ansible/ansible/issues/32636
+  changed_when: False
   with_nested:
     - "{{ storj_farmer_configs }}"
     - [ 'storage_dir', 'log_dir' ]
@@ -67,6 +59,8 @@
     owner: "{{ storj_user }}"
     group: "{{ storj_group }}"
     mode: 0755
+  # Workaround for https://github.com/ansible/ansible/issues/32636
+  changed_when: False
   with_items:
     - "{{ storj_farmer_configs }}"
 
