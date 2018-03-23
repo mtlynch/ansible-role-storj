@@ -36,7 +36,18 @@
   with_items:
     - "{{ storj_dir }}"
     - "{{ storj_farmer_share_dir }}"
+    - "{{ storj_farmer_config_dir }}"
     - "{{ storj_logs_dir }}"
+
+- name: create storj farmer share directories
+  file:
+    path: "{{ storj_farmer_share_dir }}/{{ item.payment_address }}"
+    state: directory
+    owner: "{{ storj_user }}"
+    group: "{{ storj_group }}"
+    mode: 0755
+  with_items:
+    - "{{ storj_farmer_configs }}"
 
 - name: ensure storjshare daemon is running
   command: storjshare daemon
@@ -46,34 +57,39 @@
   changed_when: "'* starting daemon' in daemon_result.stdout"
   failed_when: "'failed' in daemon_result.stderr"
 
-- name: check for existing storjshare config
-  stat:
-    path: "{{ storj_config_path }}"
-  register: config_path
+- name: build config data
+  import_tasks: build_farmer_configs.yml
 
-- name: create storjshare config
+- name: create storjshare configs
   command: |
     storjshare create \
-      --storj "{{ storj_payment_address }}" \
-      --storage "{{ storj_farmer_share_dir }}" \
-      --size "{{ storj_farmer_share_size }}" \
+      --storj "{{ item.payment_address }}" \
+      --storage "{{ storj_farmer_share_dir }}/{{ item.payment_address }}" \
+      --size "{{ item.share_size }}" \
       --rpcaddress "{{ storj_daemon_rpc_address }}" \
-      --rpcport "{{ storj_daemon_rpc_port }}" \
+      --rpcport "{{ item.rpc_port }}" \
       --logdir "{{ storj_logs_dir }}" \
       --verbosity "{{ storj_daemon_log_verbosity }}" \
-      --outfile "{{ storj_config_path }}" \
+      --outfile "{{ item.config_path }}" \
       --noedit
   become: true
   become_user: "{{ storj_user }}"
+  when: not item.config_path_exists
   register: create_config_result
-  when: not config_path.stat.exists
   changed_when: "'skipped' not in create_config_result.stdout"
-  failed_when: "(create_config_result.stderr is defined) and ('failed' in create_config_result.stderr)"
+  failed_when: "(create_config_result.stdout is defined) and ('failed' in create_config_result.stdout)"
+  with_items:
+    - "{{ storj_farmer_configs }}"
 
-- name: start storjshare
-  command: "storjshare start --config {{ storj_config_path }}"
+- name: start farmers
+  command: |
+    storjshare start \
+      --config "{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config" \
+      --unsafe
   become: true
   become_user: "{{ storj_user }}"
   register: storjshare_result
   changed_when: False
-  failed_when: "'failed' in storjshare_result.stderr"
+  failed_when: "('failed' in storjshare_result.stderr) and ('is already running' not in storjshare_result.stderr)"
+  with_items:
+    - "{{ storj_farmer_configs }}"

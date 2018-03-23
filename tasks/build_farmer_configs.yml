@@ -1,0 +1,39 @@
+---
+- name: create list of farmer config paths
+  set_fact:
+    storj_farmer_config_paths: "{{ storj_farmer_config_paths | default('[]') }} + [ '{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config' ]"
+  with_items:
+    - "{{ storj_farmer_configs }}"
+
+- name: create merged farmer config information
+  set_fact:
+    storj_farmer_configs_merged: "{{ storj_farmer_configs_merged | default('[]') }} + [ {{ item.0 | combine({ 'config_path': item.1 }) }} ]"
+  with_together:
+    - "{{ storj_farmer_configs }}"
+    - "{{ storj_farmer_config_paths }}"
+
+- name: reassign merged facts back to original configs 0
+  set_fact:
+    storj_farmer_configs: "{{ storj_farmer_configs_merged }}"
+
+- name: check for existing storjshare configs
+  stat:
+    path: "{{ item.config_path }}"
+  register: storj_farmer_configs_stat
+  with_items:
+    - "{{ storj_farmer_configs }}"
+
+- name: reset merged configs
+  set_fact:
+    storj_farmer_configs_merged: []
+
+- name: create merged farmer config information
+  set_fact:
+    storj_farmer_configs_merged: "{{ storj_farmer_configs_merged | default('[]') }} + [ {{ item.0 | combine({ 'config_path_exists': item.1.stat.exists }) }} ]"
+  with_together:
+    - "{{ storj_farmer_configs }}"
+    - "{{ storj_farmer_configs_stat.results }}"
+
+- name: reassign merged facts back to original configs
+  set_fact:
+    storj_farmer_configs: "{{ storj_farmer_configs_merged }}"
