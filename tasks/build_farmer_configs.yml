@@ -1,18 +1,14 @@
 ---
-- name: create list of farmer config paths
+- name: create merged farmer config information
   set_fact:
-    storj_farmer_config_paths: "{{ storj_farmer_config_paths | default('[]') }} + [ '{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config' ]"
+    storj_farmer_configs_merged: "{{ storj_farmer_configs_merged | default('[]') }} + [ {{ merged_item }} ]"
+  vars:
+    config_path: "{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config"
+    merged_item: "{{ {'config_path': config_path } | combine(item) }}"
   with_items:
     - "{{ storj_farmer_configs }}"
 
-- name: create merged farmer config information
-  set_fact:
-    storj_farmer_configs_merged: "{{ storj_farmer_configs_merged | default('[]') }} + [ {{ item.0 | combine({ 'config_path': item.1 }) }} ]"
-  with_together:
-    - "{{ storj_farmer_configs }}"
-    - "{{ storj_farmer_config_paths }}"
-
-- name: reassign merged facts back to original configs 0
+- name: reassign merged facts back to original configs (pass 1)
   set_fact:
     storj_farmer_configs: "{{ storj_farmer_configs_merged }}"
 
