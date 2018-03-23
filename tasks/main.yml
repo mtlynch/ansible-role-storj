@@ -26,29 +26,6 @@
     state: present
     global: yes
 
-- name: create storj directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ storj_user }}"
-    group: "{{ storj_group }}"
-    mode: 0755
-  with_items:
-    - "{{ storj_dir }}"
-    - "{{ storj_farmer_share_dir }}"
-    - "{{ storj_farmer_config_dir }}"
-    - "{{ storj_logs_dir }}"
-
-- name: create storj farmer share directories
-  file:
-    path: "{{ storj_farmer_share_dir }}/{{ item.payment_address }}"
-    state: directory
-    owner: "{{ storj_user }}"
-    group: "{{ storj_group }}"
-    mode: 0755
-  with_items:
-    - "{{ storj_farmer_configs }}"
-
 - name: ensure storjshare daemon is running
   command: storjshare daemon
   become: true
@@ -60,15 +37,42 @@
 - name: build config data
   import_tasks: build_farmer_configs.yml
 
+- name: create storj farmer directories
+  file:
+    path: "{{ item[0][item[1]] }}"
+    state: directory
+    recurse: yes
+    owner: "{{ storj_user }}"
+    group: "{{ storj_group }}"
+    mode: 0755
+  # Workaround for https://github.com/ansible/ansible/issues/32636
+  changed_when: False
+  with_nested:
+    - "{{ storj_farmer_configs }}"
+    - [ 'storage_dir', 'log_dir' ]
+
+- name: create storj farmer config directories
+  file:
+    path: "{{ item.config_path | dirname }}"
+    state: directory
+    recurse: yes
+    owner: "{{ storj_user }}"
+    group: "{{ storj_group }}"
+    mode: 0755
+  # Workaround for https://github.com/ansible/ansible/issues/32636
+  changed_when: False
+  with_items:
+    - "{{ storj_farmer_configs }}"
+
 - name: create storjshare configs
   command: |
     storjshare create \
       --storj "{{ item.payment_address }}" \
-      --storage "{{ storj_farmer_share_dir }}/{{ item.payment_address }}" \
+      --storage "{{ item.storage_dir }}" \
       --size "{{ item.share_size }}" \
       --rpcaddress "{{ item.rpc_address }}" \
       --rpcport "{{ item.rpc_port }}" \
-      --logdir "{{ storj_logs_dir }}" \
+      --logdir "{{ item.log_dir }}" \
       --verbosity "{{ storj_daemon_log_verbosity }}" \
       --outfile "{{ item.config_path }}" \
       --noedit
