@@ -7,7 +7,15 @@
         update_cache: yes
       changed_when: false
   vars:
-    storj_payment_address: "0x0000000000000000000000000000000000000000"
-    storj_farmer_share_size: "500KB"
+    storj_farmer_configs:
+      - payment_address: "0x0000000000000000000000000000000000000000"
+        rpc_port: 4000
+        share_size: "500KB"
+      - payment_address: "0x0000000000000000000000000000000000000001"
+        rpc_port: 4001
+        share_size: "600KB"
+      - payment_address: "0x0000000000000000000000000000000000000002"
+        rpc_port: 4002
+        share_size: "700KB"
   roles:
     - { role: role_under_test, tags: ['role_under_test'] }
