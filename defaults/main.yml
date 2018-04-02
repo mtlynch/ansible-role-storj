@@ -15,3 +15,6 @@ storj_farmer_configs:
   share_size: null
   rpc_address: "{{ storj_farmer_default_rpc_address }}"
   rpc_port: 45015
+
+storj_npm_dir: /opt/npm
+storj_bin: "{{ storj_npm_dir }}/node_modules/storjshare-daemon/bin/storjshare.js"
