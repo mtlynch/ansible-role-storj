@@ -39,8 +39,17 @@
   become: true
   become_user: "{{ storj_user }}"
 
+- name: create symlink for storjshare binary
+  file:
+    src: "{{ storj_bin }}"
+    dest: /usr/local/bin/storjshare
+    owner: root
+    group: root
+    mode: 0775
+    state: link
+
 - name: ensure storjshare daemon is running
-  command: "{{ storj_bin }} daemon"
+  command: storjshare daemon
   become: true
   become_user: "{{ storj_user }}"
   register: daemon_result
@@ -79,7 +88,7 @@
 
 - name: create storjshare configs
   command: |
-    "{{ storj_bin }}" create \
+    storjshare create \
       --storj "{{ item.payment_address }}" \
       --storage "{{ item.storage_dir }}" \
       --size "{{ item.share_size }}" \
@@ -100,7 +109,7 @@
 
 - name: start farmers
   command: |
-    "{{ storj_bin }}" start \
+    storjshare start \
       --config "{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config" \
       --unsafe
   become: true
