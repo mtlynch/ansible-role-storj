@@ -4,7 +4,7 @@
     storj_farmer_configs_merged: "{{ storj_farmer_configs_merged | default('[]') }} + [ {{ merged_item }} ]"
   vars:
     default_item:
-      config_path: "{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config"
+      config_path: "{{ storj_farmer_config_dir }}/{{ item.rpc_port }}.config"
       rpc_address: "{{ storj_farmer_default_rpc_address }}"
       storage_dir: "{{ storj_farmer_share_dir }}/{{ item.payment_address }}"
       log_dir: "{{ storj_logs_dir }}"
