@@ -110,7 +110,7 @@
 - name: start farmers
   command: |
     storjshare start \
-      --config "{{ storj_farmer_config_dir }}/{{ item.payment_address }}.config" \
+      --config "{{ item.config_path }}" \
       --unsafe
   become: true
   become_user: "{{ storj_user }}"
