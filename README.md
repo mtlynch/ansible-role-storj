@@ -83,6 +83,12 @@ ansible-galaxy install mtlynch.storj
 ansible-playbook example.yml
 ```
 
+### Demo
+
+The demo video below shows ansible-role-storj installing Storj to a remote system and spawning two farmer nodes, each with independent settings and payout addresses:
+
+[![asciicast](https://asciinema.org/a/174578.png)](https://asciinema.org/a/174578)
+
 ## License
 
 MIT
