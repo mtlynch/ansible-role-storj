@@ -57,16 +57,26 @@ storj_logs_dir: "{{ storj_dir }}/logs"
 #### `example.yml`
 
 ```yaml
+---
 - hosts: all
+  become: True
+  become_method: sudo
+  become_user: root
+  vars:
+    storj_farmer_configs:
+      # Change payment_address to your own Storj ERC20 address.
+      - payment_address: "0x161441Efd42171687dd1468A9e23E74226541c38"
+        rpc_address: "{{ ansible_host }}"
+        rpc_port: 6000
+        storage_dir: /mnt/path1
+        share_size: 5GB
   roles:
-    - { role: mtlynch.storj }
+    - role: mtlynch.storj
 ```
 
 ### Running Example Playbook
 
 To run the example playbook, `example.yml` (above), run the following commands:
-
-TODO(mtlynch): Complete this example.
 
 ```shell
 ansible-galaxy install mtlynch.storj
